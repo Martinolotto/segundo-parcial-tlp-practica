@@ -84,8 +84,9 @@ export const update = async (req, res) => {
         .status(404)
         .json({ message: "Curso no encontrado", data: null });
     }
+    
+    Object.assign(course, data);
 
-    Object.assing(course, data);
     await course.save();
 
     return res
