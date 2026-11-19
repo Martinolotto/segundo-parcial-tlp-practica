@@ -98,6 +98,21 @@ export const remove = async (req, res) => {
     }
 
     // TODO 1: eliminación en cascada, de forma manual: al eliminar un Topic, quitarlo del array topics de todos los cursos que lo referencian. Se busca la lista de cursos que contienen el tópico, se recorre con un bucle, a cada curso se le quita el tópico de su array topics (reasignando el array sin ese id) y se guarda el curso.
+    //guardamos el id que nos mandan, y buscamos el topic en el otro modelo correspondiente. todos los cursos que referencian al topico eliminado
+    const courses = await Course.find({ topics: id });
+
+    //recorrer los cursos encontrados, con el id
+    for (const course of courses) {
+      // Reasignamos el arreglo conservando los tópicos
+      // cuyo ID sea distinto al del tópico eliminado.
+      // para cada course vamos a su topics y eliminar el id del arreglo con filter
+      course.topics = course.topics.filter(
+        (topicId) => topicId.toString() !== id,
+      );
+      //guardar el documento modificado
+      await course.save();
+    }
+
 
     return res
       .status(200)
